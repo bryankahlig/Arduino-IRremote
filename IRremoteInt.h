@@ -181,6 +181,14 @@
 #define SHARP_BITS 15
 #define DISH_BITS 16
 
+#define DENON_BITS 15
+#define DENON_BIT_MARK 304
+#define DENON_ONE_SPACE 1777
+#define DENON_ZERO_SPACE 741
+#define DENON_TRAIL 270
+#define DENON_GAP 43000
+#define DENON_TOP_BIT 0x4000
+
 #define TOLERANCE 25  // percent tolerance in measurements
 #define LTOL (1.0 - TOLERANCE/100.) 
 #define UTOL (1.0 + TOLERANCE/100.) 

@@ -228,6 +228,22 @@ void IRsend::sendJVC(unsigned long data, int nbits, int repeat)
     space(0);
 }
 
+void IRsend::sendDenon(unsigned long data,int nbits)
+{
+	enableIROut(38);
+	for (int i=0; i < nbits; i++) {
+		mark(DENON_BIT_MARK);
+		if (data & DENON_TOP_BIT) {
+			space(DENON_ONE_SPACE);
+		} else {
+			space(DENON_ZERO_SPACE);
+		}
+		data <<= 1;
+	}
+	mark(DENON_TRAIL);
+	space(DENON_GAP);
+}
+
 void IRsend::sendSAMSUNG(unsigned long data, int nbits)
 {
   enableIROut(38);
@@ -979,6 +995,31 @@ long IRrecv::decodeJVC(decode_results *results) {
     results->value = data;
     results->decode_type = JVC;
     return DECODED;
+}
+
+long IRrecv::decodeDenon(decode_results *results) {
+	long data = 0;
+	int offset = 1;
+	for (int i = 0; i < DENON_BITS; i++) {
+		if (!MATCH_MARK(results->rawbuf[offset],DENON_BIT_MARK)) {
+			return ERR;
+		}
+		offset++;
+		if (MATCH_SPACE(results->rawbuf[offset],DENON_ONE_SPACE)) {
+			data = (data << 1) | 1;
+		} 
+		else if (MATCH_SPACE(results->rawbuf[offset],DENON_ZERO_SPACE)) {
+			data <<= 1;
+		}
+		else {
+			return ERR;
+		}
+		offset++;
+	}
+	results->bits = DENON_BITS;
+	results->value = data;
+	results->decode_type = DENON;
+	return DECODED;
 }
 
 // SAMSUNGs have a repeat only 4 items long
